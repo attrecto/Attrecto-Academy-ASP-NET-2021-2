@@ -1,5 +1,6 @@
 ﻿using Academy_2022.Models;
 using Academy_2022.Models.Dto;
+using Academy_2022.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -10,57 +11,36 @@ namespace Academy_2022.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        // adatbazis
-        public static List<User> _users = new List<User>()
-        {
-                new User()
-                {
-                    Id = 1,
-                            FirstName = "Varga",
-                            LastName = "Oresztesz",
-                            Age = 30
-                        },
-                        new User()
-                {
-                    Id = 2,
-                    FirstName = "Kiss",
-                    LastName = "Istvan",
-                    Age = 10
-                }
-        };
+        private readonly IUserRepository _userRepository;
 
-        // ctor TAB TAB
         public UsersController()
         {
-
+            _userRepository = new UserRepository();
         }
 
         // GET: api/<UsersController>
         [HttpGet]
         public IEnumerable<User> Get()
         {
-            return _users;
+            return _userRepository.GetAll();
         }
 
         // GET api/<UsersController>/5
         [HttpGet("{id}")]
         public ActionResult<User> Get(int id)
         {
-            // fore TAB TAB
-            foreach (User user in _users)
+            var user = _userRepository.GetById(id);
+            if (user == null)
             {
-                if (user.Id == id)
-                {
-                    return user;
-                }
+                return NotFound();
             }
 
-            return NotFound();
+            return user;
         }
 
         // POST api/<UsersController>
         [HttpPost]
-        public ActionResult<User> Post([FromBody] UserDto user)
+        public ActionResult<User> Post([FromBody] UserDto userDto)
         {
             // INPUT VALIDATION
             if(!ModelState.IsValid)
@@ -68,20 +48,14 @@ namespace Academy_2022.Controllers
                 return BadRequest(ModelState);
             }
 
-            _users.Add(new Models.User
-            {
-                Id = user.Id,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Age = user.Age
-            });
+            var user = _userRepository.Create(userDto);
 
             return Created("", user);
         }
 
         // PUT api/<UsersController>/5
         [HttpPut("{id}")]
-        public ActionResult<User> Put(int id, [FromBody] UserDto user)
+        public ActionResult<User> Put(int id, [FromBody] UserDto userDto)
         {
             // INPUT VALIDATION
             if (!ModelState.IsValid)
@@ -89,37 +63,41 @@ namespace Academy_2022.Controllers
                 return BadRequest(ModelState);
             }
 
-            // for TAB TAB
-            for (int i = 0; i < _users.Count; i++)
+            var user = _userRepository.Update(id, userDto);
+            if (user == null)
             {
-                if(_users[i].Id == id)
-                {
-                    _users[i].FirstName = user.FirstName;
-                    _users[i].LastName = user.LastName;
-                    _users[i].Age = user.Age;
-
-                    return Ok(_users[i]);
-                }
+                return NotFound();
             }
 
-            return NotFound();
+            return user;
         }
 
         // DELETE api/<UsersController>/5
         [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
-            for (int i = 0; i < _users.Count; i++)
+            return _userRepository.Delete(id) 
+                ? NoContent()
+                : NotFound();
+        }
+
+        [HttpGet("test")]
+        public void Test()
+        {
+            List<string> names = new List<string> { "Maggie", "Mary", "John", "Rick" };
+
+            /*
+            IEnumerable<string> namesQuery = from name in names
+                                             where name[0] == 'M'
+                                             select name;
+            */
+
+            var namesQuery = names.Where(name => name[0] == 'M');
+
+            foreach (var name in namesQuery)
             {
-                if(_users[i].Id == id)
-                {
-                    _users.Remove(_users[i]);
-
-                    return NoContent();
-                }
+                Console.WriteLine(name);
             }
-
-            return NotFound();
         }
     }
 }
