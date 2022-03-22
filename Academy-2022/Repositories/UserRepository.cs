@@ -1,6 +1,7 @@
 ﻿using Academy_2022.Data;
 using Academy_2022.Models;
 using Academy_2022.Models.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace Academy_2022.Repositories
 {
@@ -8,31 +9,31 @@ namespace Academy_2022.Repositories
     {
         private readonly ApplicationDbContext _applicationDbContext;
 
-        public UserRepository()
+        public UserRepository(ApplicationDbContext applicationDbContext)
         {
-            _applicationDbContext = new ApplicationDbContext();
+            _applicationDbContext = applicationDbContext;
         }
 
-        public IEnumerable<User> GetAll()
+        public Task<List<User>> GetAllAsync()
         {
-            return _applicationDbContext.Users.ToList();
+            return _applicationDbContext.Users.ToListAsync();
         }
 
-        public User? GetById(int id)
+        public Task<User?> GetByIdAsync(int id)
         {
 
-            return _applicationDbContext.Users.FirstOrDefault(user => user.Id == id);
+            return _applicationDbContext.Users.FirstOrDefaultAsync(user => user.Id == id);
         }
 
-        public User Create(UserDto userDto)
+        public async Task<User> CreateAsync(UserDto userDto)
         {
             var user = new Models.User
             {
                 Email = userDto.Email
             };
 
-            _applicationDbContext.Add(user);
-            _applicationDbContext.SaveChanges();
+            var addUser = await _applicationDbContext.AddAsync(user);
+            var saveUser = await _applicationDbContext.SaveChangesAsync();
 
             return user;
         }

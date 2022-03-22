@@ -1,3 +1,8 @@
+using Academy_2022.Data;
+using Academy_2022.Repositories;
+using Academy_2022.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +11,21 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// db configuration
+builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
+ optionsBuilder.UseSqlite(builder.Configuration.GetConnectionString("ApplicationDbContext")));
+
+// sample injection
+builder.Services.AddScoped<IDiTestAService, DiTestAService>();
+// sample injection
+builder.Services.AddTransient<IDiTestBService, DiTestBService>();
+
+// repository injection
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// sample config read
+var applicationDbContextPath = builder.Configuration.GetSection("ConnectionStrings:ApplicationDbContext");
 
 var app = builder.Build();
 
