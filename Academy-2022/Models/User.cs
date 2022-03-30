@@ -6,13 +6,13 @@
 
         public string Email { get; set; }
 
-        public string? FirstName { get; set; }
-
-        public string? LastName { get; set; }
+        public string? Name { get; set; }
 
         public string? Password { get; set; }
 
         // members
-        public List<Course> Courses { get; set; }
+        public List<CourseUser> Courses { get; set; }
+
+        public string Role { get; set; }
     }
 }

@@ -71,5 +71,10 @@ namespace Academy_2022.Repositories
 
             return false;
         }
+
+        public User? GetByEmail(string email)
+        {
+            return _applicationDbContext.Users.FirstOrDefault(x => x.Email == email);
+        }
     }
 }

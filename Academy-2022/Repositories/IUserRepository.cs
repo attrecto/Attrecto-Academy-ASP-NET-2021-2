@@ -10,5 +10,6 @@ namespace Academy_2022.Repositories
         Task<User> CreateAsync(UserDto userDto);
         User? Update(int id, UserDto userDto);
         bool Delete(int id);
+        User? GetByEmail(string email);
     }
 }

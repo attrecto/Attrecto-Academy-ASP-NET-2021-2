@@ -6,8 +6,5 @@
 
         public string Title { get; set; }
 
-        // N - 1 relation
-        public int? AuthorId { get; set; }
-        public User Author { get; set; }
     }
 }
