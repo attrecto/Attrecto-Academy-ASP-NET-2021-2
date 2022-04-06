@@ -11,7 +11,8 @@
         public string? Password { get; set; }
 
         // members
-        public List<CourseUser> Courses { get; set; }
+        public List<Course> Courses { get; set; }
+        public List<CourseUser> CourseUsers { get; set; }
 
         public string Role { get; set; }
     }

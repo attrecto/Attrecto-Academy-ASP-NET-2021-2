@@ -4,6 +4,6 @@ namespace Academy_2022.Services
 {
     public interface IUserService
     {
-        User? GetByEmail(string email);
+        Task<User?> GetByEmailAsync(string email);
     }
 }

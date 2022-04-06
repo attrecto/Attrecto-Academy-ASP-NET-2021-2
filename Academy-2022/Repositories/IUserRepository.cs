@@ -7,9 +7,9 @@ namespace Academy_2022.Repositories
     {
         Task<List<User>> GetAllAsync();
         Task<User?> GetByIdAsync(int id);
-        Task<User> CreateAsync(UserDto userDto);
-        User? Update(int id, UserDto userDto);
-        bool Delete(int id);
-        User? GetByEmail(string email);
+        Task<User> CreateAsync(CreateUserDto userDto);
+        Task<User?> UpdateAsync(UpdateUserDto userDto);
+        Task<bool> DeleteAsync(int id);
+        Task<User?> GetByEmailAsync(string email);
     }
 }

@@ -12,9 +12,9 @@ namespace Academy_2022.Services
             _userService = userService;
         }
 
-        public User? Login(LoginDto loginDto)
+        public async Task<User?> LoginAsync(LoginDto loginDto)
         {
-            var user = _userService.GetByEmail(loginDto.Email);
+            var user = await _userService.GetByEmailAsync(loginDto.Email);
             if (user == null || user.Password != loginDto.Password)
             {
                 return null;

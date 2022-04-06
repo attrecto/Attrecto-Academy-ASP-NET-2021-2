@@ -12,9 +12,9 @@ namespace Academy_2022.Services
             _userRepository = userRepository;
         }
 
-        public User? GetByEmail(string email)
+        public Task<User?> GetByEmailAsync(string email)
         {
-            return _userRepository.GetByEmail(email);
+            return _userRepository.GetByEmailAsync(email);
         }
     }
 }

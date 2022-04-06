@@ -5,6 +5,6 @@ namespace Academy_2022.Services
 {
     public interface IAccountService
     {
-        User? Login(LoginDto loginDto);
+        Task<User?> LoginAsync(LoginDto loginDto);
     }
 }

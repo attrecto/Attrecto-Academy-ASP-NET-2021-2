@@ -16,51 +16,65 @@ namespace Academy_2022.Repositories
 
         public Task<List<User>> GetAllAsync()
         {
-            return _applicationDbContext.Users.ToListAsync();
+            return _applicationDbContext.Users
+                .Include(x => x.Courses)
+                .ToListAsync();
         }
 
         public Task<User?> GetByIdAsync(int id)
         {
 
-            return _applicationDbContext.Users.FirstOrDefaultAsync(user => user.Id == id);
+            return _applicationDbContext.Users
+                .Include(x => x.Courses)
+                .FirstOrDefaultAsync(user => user.Id == id);
         }
 
-        public async Task<User> CreateAsync(UserDto userDto)
+        public async Task<User> CreateAsync(CreateUserDto userDto)
         {
             var user = new Models.User
             {
-                Email = userDto.Email
+                Name = userDto.Name,
+                Email = userDto.Email,
+                Password = userDto.Password,
+                Role = userDto.Role,
+                Courses = new List<Course>()
             };
 
-            var addUser = await _applicationDbContext.AddAsync(user);
-            var saveUser = await _applicationDbContext.SaveChangesAsync();
+            await _applicationDbContext.AddAsync(user);
+            await _applicationDbContext.SaveChangesAsync();
 
             return user;
         }
 
-        public User? Update(int id, UserDto userDto)
+        public async Task<User?> UpdateAsync(UpdateUserDto userDto)
         {
-            var user = _applicationDbContext.Users.FirstOrDefault(user => user.Id == id);
+            var user = await _applicationDbContext.Users
+                .Include(x => x.Courses)
+                .FirstOrDefaultAsync(user => user.Id == userDto.Id);
+            
             if(user == null)
             {
                 return null;
             }
 
+            user.Name = userDto.Name;
             user.Email = userDto.Email;
+            user.Password = userDto.Password;
+            user.Role = userDto.Role;
 
-            _applicationDbContext.SaveChanges();
+            await _applicationDbContext.SaveChangesAsync();
 
             return user;
         }
 
-        public bool Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
-            var user = _applicationDbContext.Users.FirstOrDefault(user => user.Id == id);
+            var user = await _applicationDbContext.Users.FirstOrDefaultAsync(user => user.Id == id);
 
             try
             {
-                _applicationDbContext.Remove(user);
-                _applicationDbContext.SaveChanges();
+                _applicationDbContext.Users.Remove(user);
+                _applicationDbContext.SaveChangesAsync();
                 
                 return true;
             }
@@ -72,9 +86,9 @@ namespace Academy_2022.Repositories
             return false;
         }
 
-        public User? GetByEmail(string email)
+        public Task<User?> GetByEmailAsync(string email)
         {
-            return _applicationDbContext.Users.FirstOrDefault(x => x.Email == email);
+            return _applicationDbContext.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
     }
 }
